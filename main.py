@@ -1,5 +1,5 @@
 import logging
-import requests
+from markups import *
 from telegram.ext import Application, MessageHandler, filters, CommandHandler
 from valutes import *
 
@@ -13,20 +13,27 @@ logger = logging.getLogger(__name__)
 async def echo(update, context):
     m = update.message.text
     try:
-        data = take_data()
-        await update.message.reply_text(f"{data['Valute'][m]['Name']} курс к рублю {data['Valute'][m]['Value']}")
+        data = take_data(m)
+        await update.message.reply_text(f"{data['Name']} курс к рублю {data['Value']}")
     except Exception:
         await update.message.reply_text("Некорректно введена валюта. Получить справку: /help")
 
 async def start(update, context):
     user = update.effective_user
     await update.message.reply_html(
-        rf"Привет {user.mention_html()}! Напиши название валюты и узнаешь ее курс к рублю",
+        rf"Привет {user.mention_html()}! Напиши название валюты и узнаешь ее курс к рублю", reply_markup=markup
     )
 
 
 async def help_command(update, context):
-    await update.message.reply_text("Введите валюту, например USD")
+    await update.message.reply_text("Введите валюту, например USD", reply_markup=markup)
+
+async def all(update, context):
+    text = []
+    a = take_data()['Valute']
+    for i in a.keys():
+        text.append(a[i]['Name'] + ' ' + i + ' курс к рублю ' + str(a[i]['Value']))
+    await update.message.reply_text('\n\n'.join(text))
 
 
 def main():
@@ -34,6 +41,7 @@ def main():
 
     application.add_handler(CommandHandler("start", start))
     application.add_handler(CommandHandler("help", help_command))
+    application.add_handler(CommandHandler("all", all))
 
     application.add_handler(MessageHandler(filters.TEXT, echo))
 
