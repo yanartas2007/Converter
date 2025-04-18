@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 convertation_data = {}
 
 
-async def echo(update, context):
+async def echo(update, context):  # основная функция. возвращает курс к рублю валюты
     m = update.message.text
     try:
         data = take_data(m)
@@ -23,14 +23,14 @@ async def echo(update, context):
         await update.message.reply_text("Некорректно введена валюта. Получить справку: /help", reply_markup=standart_markup)
 
 
-async def start(update, context):
+async def start(update, context): # функция начала
     user = update.effective_user
     await update.message.reply_html(
         rf"Привет {user.mention_html()}! Напиши название валюты и узнаешь ее курс к рублю🤑", reply_markup=standart_markup
     )
 
 
-async def help_command(update, context):
+async def help_command(update, context): # помощь
     await update.message.reply_text("""Введите валюту, например USD, чтобы получить ее курс к рублю
     /start начать
     /help помощь
@@ -39,18 +39,18 @@ async def help_command(update, context):
     """, reply_markup=standart_markup)
 
 
-async def stop(update, context):
+async def stop(update, context): # завершение conversation
     await update.message.reply_text("Отмена конвертации", reply_markup=standart_markup)
     return ConversationHandler.END
 
 
-async def convert(update, context):
+async def convert(update, context): # перевод валют
     await update.message.reply_text("Начало конвертации. Введите /stop чтобы отменить. Введите первую валюту",
                                     reply_markup=conversation_markup)
     return 1
 
 
-async def all(update, context):
+async def all(update, context): # справка о всех валютах
     text = []
     a = take_data()['Valute']
     for i in a.keys():
