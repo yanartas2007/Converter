@@ -54,7 +54,7 @@ async def all(update, context): # справка о всех валютах
     text = []
     a = take_data()['Valute']
     for i in a.keys():
-        text.append(a[i]['Name'] + ' ' + i + ' курс к рублю ' + str(a[i]['Value']))
+        text.append(a[i]['Name'] + f' ({a[i]["NumCode"]}, {a[i]["CharCode"]})' + ' ' + ' курс к рублю ' + str(a[i]['Value']))
     await update.message.reply_text('\n\n'.join(text), reply_markup=standart_markup)
 
 
@@ -62,8 +62,13 @@ async def response1(update, context):
     m = valute_normal_name(update.message.text)
     convertation_data[str(update.effective_user.mention_html())] = dict()
     convertation_data[str(update.effective_user.mention_html())]['v1'] = m
-    await update.message.reply_text("Введите количество этой валюты", reply_markup=conversation_markup_numbers)
-    return 2
+    if is_valute_name(m):
+        await update.message.reply_text("Введите количество этой валюты", reply_markup=conversation_markup_numbers)
+        return 2
+    else:
+        await update.message.reply_text("Неверное имя валюты",
+                                        reply_markup=conversation_markup)
+        return 1
 
 
 async def response2(update, context):
@@ -76,19 +81,20 @@ async def response2(update, context):
 async def response3(update, context):
     m = update.message.text
     convertation_data[str(update.effective_user.mention_html())]['v2'] = m
+    if is_valute_name(m):
+        pass
+    else:
+        await update.message.reply_text("Неверное имя валюты",
+                                        reply_markup=conversation_markup)
+        return 3
     try:
-        print('start')
         data = take_data()['Valute']
         a = float(data[convertation_data[str(update.effective_user.mention_html())]['v1']]['Value'])
-        print(a)
         b = float(
             convertation_data[str(update.effective_user.mention_html())]['c1'])
-        print(b)
         c = float(
             data[convertation_data[str(update.effective_user.mention_html())]['v2']]['Value'])
-        print(c)
         res = a * b / c
-        print(res)
         await update.message.reply_text(
             f"{convertation_data[str(update.effective_user.mention_html())]['c1']} {convertation_data[str(update.effective_user.mention_html())]['v1']}\n"
             f" = \n{res} {convertation_data[str(update.effective_user.mention_html())]['v2']}", reply_markup=standart_markup)

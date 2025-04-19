@@ -3,14 +3,14 @@ import requests
 import csv
 
 
-def take_data(m=None): # возвращает словарь с курсами от центробанка
+def take_data(m=None): # возвращает словарь с курсами
     adres = 'https://www.cbr-xml-daily.ru/daily_json.js'
     data = requests.get(adres).json()
     if m:
         data = data['Valute'][m]
     return data
 
-def valute_normal_name(m):
+def valute_normal_name(m): # превращает введенное название валюты в ключ словаря
     m2 = m.lower().strip()
     try:
         with open('names_table.csv', encoding="utf8") as csvfile:
@@ -41,6 +41,29 @@ def update_csv(): # создает таблицу со списком валют
         data = take_data()['Valute']
         for i in data.keys():
             writer.writerow([data[i]['CharCode'], data[i]['Name'],data[i]['NumCode']])
+
+def is_valute_name(m): # True если это название валюты и False если нет
+    m2 = m.lower().strip()
+    try:
+        with open('names_table.csv', encoding="utf8") as csvfile:
+            reader = csv.reader(csvfile, delimiter=';', quotechar='"')
+            for i in reader:
+                for j in i:
+                    if j.lower() == m2:
+                        return True
+            else:
+                return False
+    except Exception:
+        print('names_table.csv не найден. он будет пересоздан')
+        update_csv()
+        with open('names_table.csv', encoding="utf8") as csvfile:
+            reader = csv.reader(csvfile, delimiter=';', quotechar='"')
+            for i in reader:
+                for j in i:
+                    if j.lower() == m2:
+                        return True
+            else:
+                return False
 
 if __name__ == '__main__': # для отладки, можно запустить этот файл
     update_csv()
