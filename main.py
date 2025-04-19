@@ -80,6 +80,7 @@ async def response2(update, context):
 
 async def response3(update, context):
     m = update.message.text
+    m = valute_normal_name(m)
     convertation_data[str(update.effective_user.mention_html())]['v2'] = m
     if is_valute_name(m):
         pass
