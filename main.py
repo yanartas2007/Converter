@@ -15,7 +15,7 @@ convertation_data = {}
 
 
 async def echo(update, context):  # основная функция. возвращает курс к рублю валюты
-    m = update.message.text
+    m = valute_normal_name(update.message.text)
     try:
         data = take_data(m)
         await update.message.reply_text(f"{data['Name']} курс к рублю {data['Value']}")
@@ -31,7 +31,7 @@ async def start(update, context): # функция начала
 
 
 async def help_command(update, context): # помощь
-    await update.message.reply_text("""Введите валюту, например USD, чтобы получить ее курс к рублю
+    await update.message.reply_text("""Введите валюту, в любом формате ("USD"="Доллар США"="840"), чтобы получить ее курс к рублю
     /start начать
     /help помощь
     /all курс всех валют к рублю
@@ -59,7 +59,7 @@ async def all(update, context): # справка о всех валютах
 
 
 async def response1(update, context):
-    m = update.message.text
+    m = valute_normal_name(update.message.text)
     convertation_data[str(update.effective_user.mention_html())] = dict()
     convertation_data[str(update.effective_user.mention_html())]['v1'] = m
     await update.message.reply_text("Введите количество этой валюты", reply_markup=conversation_markup_numbers)
@@ -67,7 +67,7 @@ async def response1(update, context):
 
 
 async def response2(update, context):
-    m = update.message.text
+    m = valute_normal_name(update.message.text)
     convertation_data[str(update.effective_user.mention_html())]['c1'] = m
     await update.message.reply_text("Введите вторую валюту", reply_markup=conversation_markup)
     return 3
