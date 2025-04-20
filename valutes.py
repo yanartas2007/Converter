@@ -4,7 +4,7 @@ import csv
 
 
 def take_data(m=None): # возвращает словарь с курсами
-    adres = 'https://www.cbr-xml-daily.ru/daily_json.js'
+    adres = 'https://www.cbr-xml-daily.ru/daily_json.js' # API центробанка
     data = requests.get(adres).json()
     if m:
         data = data['Valute'][m]
@@ -13,7 +13,7 @@ def take_data(m=None): # возвращает словарь с курсами
 def valute_normal_name(m): # превращает введенное название валюты в ключ словаря
     m2 = m.lower().strip()
     try:
-        with open('names_table.csv', encoding="utf8") as csvfile:
+        with open('data\\names_table.csv', encoding="utf8") as csvfile:
             reader = csv.reader(csvfile, delimiter=';', quotechar='"')
             for i in reader:
                 for j in i:
@@ -22,9 +22,9 @@ def valute_normal_name(m): # превращает введенное назва�
             else:
                 return m
     except Exception:
-        print('names_table.csv не найден. он будет пересоздан')
+        print('data\\names_table.csv не найден. он будет пересоздан')
         update_csv()
-        with open('names_table.csv', encoding="utf8") as csvfile:
+        with open('data\\names_table.csv', encoding="utf8") as csvfile:
             reader = csv.reader(csvfile, delimiter=';', quotechar='"')
             for i in reader:
                 for j in i:
@@ -34,7 +34,7 @@ def valute_normal_name(m): # превращает введенное назва�
                 return m
 
 def update_csv(): # создает таблицу со списком валют и их названий в разных системах обозначений
-    with open('names_table.csv', 'w', newline='', encoding="utf8") as csvfile:
+    with open('data\\names_table.csv', 'w', newline='', encoding="utf8") as csvfile:
         writer = csv.writer(
             csvfile, delimiter=';', quotechar='"', quoting=csv.QUOTE_MINIMAL)
         writer.writerow(['CharCode', 'Name', 'NumCode'])
@@ -45,7 +45,7 @@ def update_csv(): # создает таблицу со списком валют
 def is_valute_name(m): # True если это название валюты и False если нет
     m2 = m.lower().strip()
     try:
-        with open('names_table.csv', encoding="utf8") as csvfile:
+        with open('data\\names_table.csv', encoding="utf8") as csvfile:
             reader = csv.reader(csvfile, delimiter=';', quotechar='"')
             for i in reader:
                 for j in i:
@@ -54,9 +54,9 @@ def is_valute_name(m): # True если это название валюты и F
             else:
                 return False
     except Exception:
-        print('names_table.csv не найден. он будет пересоздан')
+        print('data\\names_table.csv не найден. он будет пересоздан')
         update_csv()
-        with open('names_table.csv', encoding="utf8") as csvfile:
+        with open('data\\names_table.csv', encoding="utf8") as csvfile:
             reader = csv.reader(csvfile, delimiter=';', quotechar='"')
             for i in reader:
                 for j in i:
