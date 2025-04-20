@@ -1,4 +1,6 @@
 import logging
+import os
+import sys
 
 from telegram.ext import Application, MessageHandler, filters, CommandHandler, ConversationHandler
 
@@ -18,10 +20,20 @@ async def echo(update, context):  # основная функция. возвр�
     m = valute_normal_name(update.message.text)
     try:
         data = take_data(m)
-        await update.message.reply_text(f"{data['Name']} курс к рублю {data['Value']}")
+        path = sys.argv[0][:-8] + '\data\country_pictures'
+        dir_list = os.listdir(path)
+        for i in ['.png', '.jpg', '.gif', '.webp']:
+            print(m, i, dir_list, f'data\country_pictures\\{m}' + i)
+            if m + i in dir_list:
+                await context.bot.send_photo(update.message.chat_id, f'data\country_pictures\\{m}' + i,
+                                             reply_markup=standart_markup, )
+                break
+        await update.message.reply_text(f"{data['Name']} курс к рублю {data['Value']}", reply_markup=standart_markup)
+
+
     except Exception:
         await update.message.reply_text("Некорректно введена валюта. Получить справку: /help",
-                                        reply_markup=standart_markup)
+                                reply_markup=standart_markup)
 
 
 async def start(update, context):  # функция начала
