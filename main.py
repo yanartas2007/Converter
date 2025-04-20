@@ -20,17 +20,24 @@ async def echo(update, context):  # основная функция. возвр�
         data = take_data(m)
         await update.message.reply_text(f"{data['Name']} курс к рублю {data['Value']}")
     except Exception:
-        await update.message.reply_text("Некорректно введена валюта. Получить справку: /help", reply_markup=standart_markup)
+        await update.message.reply_text("Некорректно введена валюта. Получить справку: /help",
+                                        reply_markup=standart_markup)
 
 
-async def start(update, context): # функция начала
+async def start(update, context):  # функция начала
     user = update.effective_user
+    ans = rf"Привет {user.mention_html()}! Напиши название валюты и узнаешь ее курс к рублю🤑"
+    try:
+        await context.bot.send_photo(update.message.chat_id, 'data\\start_picture.png', reply_markup=standart_markup)
+    except Exception:
+        pass
     await update.message.reply_html(
-        rf"Привет {user.mention_html()}! Напиши название валюты и узнаешь ее курс к рублю🤑", reply_markup=standart_markup
+        ans,
+        reply_markup=standart_markup
     )
 
 
-async def help_command(update, context): # помощь
+async def help_command(update, context):  # помощь
     await update.message.reply_text("""Введите валюту, в любом формате ("USD"="Доллар США"="840"), чтобы получить ее курс к рублю
     /start начать
     /help помощь
@@ -39,22 +46,23 @@ async def help_command(update, context): # помощь
     """, reply_markup=standart_markup)
 
 
-async def stop(update, context): # завершение conversation
+async def stop(update, context):  # завершение conversation
     await update.message.reply_text("Отмена конвертации", reply_markup=standart_markup)
     return ConversationHandler.END
 
 
-async def convert(update, context): # перевод валют
+async def convert(update, context):  # перевод валют
     await update.message.reply_text("Начало конвертации. Введите /stop чтобы отменить. Введите первую валюту",
                                     reply_markup=conversation_markup)
     return 1
 
 
-async def all(update, context): # справка о всех валютах
+async def all(update, context):  # справка о всех валютах
     text = []
     a = take_data()['Valute']
     for i in a.keys():
-        text.append(a[i]['Name'] + f' ({a[i]["NumCode"]}, {a[i]["CharCode"]})' + ' ' + ' курс к рублю ' + str(a[i]['Value']))
+        text.append(
+            a[i]['Name'] + f' ({a[i]["NumCode"]}, {a[i]["CharCode"]})' + ' ' + ' курс к рублю ' + str(a[i]['Value']))
     await update.message.reply_text('\n\n'.join(text), reply_markup=standart_markup)
 
 
@@ -98,7 +106,8 @@ async def response3(update, context):
         res = a * b / c
         await update.message.reply_text(
             f"{convertation_data[str(update.effective_user.mention_html())]['c1']} {convertation_data[str(update.effective_user.mention_html())]['v1']}\n"
-            f" = \n{res} {convertation_data[str(update.effective_user.mention_html())]['v2']}", reply_markup=standart_markup)
+            f" = \n{res} {convertation_data[str(update.effective_user.mention_html())]['v2']}",
+            reply_markup=standart_markup)
     except Exception:
         await update.message.reply_text("Не удалось рассчитать")
     return ConversationHandler.END
@@ -122,8 +131,6 @@ def main():
     ))
 
     application.add_handler(MessageHandler(filters.TEXT, echo))
-
-
 
     application.run_polling()
 
