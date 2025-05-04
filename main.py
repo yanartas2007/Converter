@@ -19,27 +19,21 @@ convertation_data = {}
 
 async def echo(update, context):  # основная функция. возвращает курс к рублю валюты
     m = valute_normal_name(update.message.text)
-    print(m)
     try:
         data = take_data(m)
-        print(data)
         try:
             country = countriesdict[m] + ' страна'
-            print(country)
             await context.bot.send_photo(
                 update.message.chat_id,
                 picture(*address(country)),
                 caption=f"{data['Name']} курс к рублю {data['Value']}",
                 reply_markup=standart_markup
             )
-            print(1)
         except Exception:
-            print(2)
             await update.message.reply_text(f"{data['Name']} курс к рублю {data['Value']}", reply_markup=standart_markup)
 
 
     except Exception:
-        print(3)
         await update.message.reply_text("Некорректно введена валюта. Получить справку: /help",
                                         reply_markup=standart_markup)
 
@@ -91,6 +85,14 @@ async def response1(update, context):
     convertation_data[str(update.effective_user.mention_html())] = dict()
     convertation_data[str(update.effective_user.mention_html())]['v1'] = m
     if is_valute_name(m):
+        try:
+            country = countriesdict[m] + ' страна'
+            await context.bot.send_photo(
+                update.message.chat_id,
+                picture(*address(country)),
+                reply_markup=standart_markup)
+        except Exception:
+            pass
         await update.message.reply_text("Введите количество этой валюты", reply_markup=conversation_markup_numbers)
         return 2
     else:
@@ -111,7 +113,14 @@ async def response3(update, context):
     m = valute_normal_name(m)
     convertation_data[str(update.effective_user.mention_html())]['v2'] = m
     if is_valute_name(m):
-        pass
+        try:
+            country = countriesdict[m] + ' страна'
+            await context.bot.send_photo(
+                update.message.chat_id,
+                picture(*address(country)),
+                reply_markup=standart_markup)
+        except Exception:
+            pass
     else:
         await update.message.reply_text("Неверное имя валюты",
                                         reply_markup=conversation_markup)
