@@ -37,7 +37,7 @@ def update_csv(): # создает таблицу со списком валют
     with open('data\\names_table.csv', 'w', newline='', encoding="utf8") as csvfile:
         writer = csv.writer(
             csvfile, delimiter=';', quotechar='"', quoting=csv.QUOTE_MINIMAL)
-        writer.writerow(['CharCode', 'Name', 'NumCode'])
+        writer.writerow(['CharCode', 'Name', 'NumCode' ])
         data = take_data()['Valute']
         for i in data.keys():
             writer.writerow([data[i]['CharCode'], data[i]['Name'],data[i]['NumCode']])
